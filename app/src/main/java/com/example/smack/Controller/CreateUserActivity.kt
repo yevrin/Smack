@@ -1,9 +1,11 @@
-package com.example.smack
+package com.example.smack.Controller
 
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.example.smack.R
+import com.example.smack.Services.AuthService
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -33,10 +35,6 @@ class CreateUserActivity : AppCompatActivity() {
 
     }
 
-    fun createUserBtnCreateClicked(view : View){
-
-    }
-
     fun generateAvatarClicked(view : View){
 
         val random = Random()
@@ -52,7 +50,19 @@ class CreateUserActivity : AppCompatActivity() {
         val resourceId = resources.getIdentifier(userAvatar, "drawable", packageName)
         avatarImgCreate.setImageResource(resourceId)
 
-
-
     }
+
+
+    fun createUserBtnCreateClicked(view : View){
+
+        AuthService.registerUser(this, "person@place.com", "12345678"){
+            complete->
+            if (complete){
+                println("register user successful")
+            }else{
+                println("register user failed")
+            }
+        }//emailTextFieldCreate.text, passwordTextFieldCreate.text)
+    }
+
 }
