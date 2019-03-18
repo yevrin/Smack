@@ -1,11 +1,13 @@
 package com.example.smack.Controller
 
+import android.content.Intent
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.example.smack.R
 import com.example.smack.Services.AuthService
+import com.example.smack.Services.UserDataService
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -65,7 +67,15 @@ class CreateUserActivity : AppCompatActivity() {
                 AuthService.loginUser(this, email, password){
                     loginSuccess->
                     if(loginSuccess){
-                        println("login user successful")
+                        AuthService.addUser(this, username, email, userAvatar, avatarColour){
+                            addUserSuccess->
+                            if(addUserSuccess){
+                                println("adding user ${UserDataService.name} succeeded")
+                                finish()
+                            }else{
+                                println("adding user failed")
+                            }
+                        }
                     }else{
                         println("login user failed")
                     }
