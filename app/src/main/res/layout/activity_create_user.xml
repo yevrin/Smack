@@ -74,4 +74,12 @@
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="32dp"
             android:textColor="@android:color/white" android:background="@color/colorPrimary"
             android:textAlignment="center" android:onClick="createUserBtnCreateClicked"/>
+    <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/createSpinner" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/profileImgInstructTxt" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"/>
 </android.support.constraint.ConstraintLayout>
