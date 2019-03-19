@@ -1,11 +1,13 @@
 package com.example.smack.Controller
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.example.smack.R
 import com.example.smack.Services.AuthService
@@ -61,6 +63,7 @@ class CreateUserActivity : AppCompatActivity() {
     fun createUserBtnCreateClicked(view : View){
 
         enableSpinner(true)
+        hideKeyboard()
 
         val username = usernameTextFieldCreate.text.toString()
         val email = emailTextFieldCreate.text.toString()
@@ -96,12 +99,12 @@ class CreateUserActivity : AppCompatActivity() {
         }
     }
 
-    fun errorToast(msg: String){
+    private fun errorToast(msg: String){
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
         enableSpinner(false)
     }
 
-    fun enableSpinner(enable: Boolean){
+    private fun enableSpinner(enable: Boolean){
         if(enable){
             createSpinner.visibility = View.VISIBLE
         }else{
@@ -112,6 +115,13 @@ class CreateUserActivity : AppCompatActivity() {
         avatarImgCreate.isEnabled = !enable
         generateBGColorBtnCreate.isEnabled = !enable
 
+    }
+
+    private fun hideKeyboard(){
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if(inputManager.isAcceptingText){
+            inputManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+        }
     }
 
 }
