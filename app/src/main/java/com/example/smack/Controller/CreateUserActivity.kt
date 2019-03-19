@@ -77,7 +77,7 @@ class CreateUserActivity : AppCompatActivity() {
                                     LocalBroadcastManager.getInstance(this).sendBroadcast(userDataChange)
 
                                     enableSpinner(false)
-                                    
+
                                     finish()
                                 } else {
                                     errorToast("adding user failed")
