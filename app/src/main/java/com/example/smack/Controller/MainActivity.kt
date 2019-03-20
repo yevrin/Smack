@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
 import com.example.smack.Model.Channel
@@ -26,17 +27,24 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_channel_dialog.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
-//import android.annotation.
-//import android.app.slice.SliceQuery
 
 class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
+    lateinit var channelAdapter : ArrayAdapter<Channel>
+
+    private fun setUpChannelAdapter(){
+        channelAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1, MessageService.channels)
+        channel_list.adapter = channelAdapter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        socket.connect()
+        socket.on("channelCreated", onNewChannel)
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar,
@@ -46,16 +54,16 @@ class MainActivity : AppCompatActivity() {
 
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-        
-        socket.connect()
-        socket.on("channelCreated", onNewChannel)
+
+        setUpChannelAdapter()
+
         /*LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
             IntentFilter(BROADCAST_USER_DATA_CHANGE))*/
 
     }
 
     private val userDataChangeReceiver = object: BroadcastReceiver(){
-        override fun onReceive(context: Context?, intent: Intent?) {
+        override fun onReceive(context: Context, intent: Intent?) {
             Log.d("USERDATA_CHANGERECEIVER", "object called")
             if(AuthService.isLoggedIn){
                 usernameTxtNavHeader.text = UserDataService.name
@@ -67,6 +75,16 @@ class MainActivity : AppCompatActivity() {
 
                 loginoutBtnNavHeader.text = "Logout"
                 Log.d("USERDATA_CHANGERECEIVER", "everything good here")
+
+                MessageService.findAllChannels(context){complete->
+                    if(complete){
+                        channelAdapter.notifyDataSetChanged()
+                    }else{
+                        Log.d("GET_CHANNELS", "could not receive channels")
+                    }
+
+                }
+
             }else{
                 loginoutBtnNavHeader.text = "Login"
                 Log.d("USERDATA_CHANGERECEIVER", "not logged in")
@@ -82,6 +100,7 @@ class MainActivity : AppCompatActivity() {
 
             val newChannel = Channel(channelName, channelDescription, channelId)
             MessageService.channels.add(newChannel)
+            channelAdapter.notifyDataSetChanged()
         }
 
     }

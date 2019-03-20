@@ -8,6 +8,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.smack.Model.Channel
 import com.example.smack.Utililties.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -175,4 +176,5 @@ object AuthService {
 
         Volley.newRequestQueue(context).add(findUserByEmailRequest) //Not correct way -- memory leaks
     }
+
 }
