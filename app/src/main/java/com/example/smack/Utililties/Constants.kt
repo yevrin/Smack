@@ -1,6 +1,7 @@
 package com.example.smack.Utililties
 
 //URL Constants
+const val SOCKET_URL = "https://smackchatlearning.herokuapp.com/"
 const val BASE_URL = "https://smackchatlearning.herokuapp.com/v1/"
 const val REGISTER_URL = "${BASE_URL}account/register"
 const val LOGIN_URL = "${BASE_URL}account/login"
