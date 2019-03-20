@@ -24,7 +24,6 @@ import com.example.smack.Utililties.SOCKET_URL
 import io.socket.client.IO
 import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.add_channel_dialog.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
@@ -57,6 +56,9 @@ class MainActivity : AppCompatActivity() {
 
         setUpChannelAdapter()
 
+        if(App.sharedPrefs.isLoggedIn){
+            AuthService.findUserByEmail(this){}
+        }
         /*LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
             IntentFilter(BROADCAST_USER_DATA_CHANGE))*/
 
@@ -65,7 +67,7 @@ class MainActivity : AppCompatActivity() {
     private val userDataChangeReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context, intent: Intent?) {
             Log.d("USERDATA_CHANGERECEIVER", "object called")
-            if(AuthService.isLoggedIn){
+            if(App.sharedPrefs.isLoggedIn){
                 usernameTxtNavHeader.text = UserDataService.name
                 userEmailTxtNavHeader.text = UserDataService.email
 
@@ -128,7 +130,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginoutBtnNavHeaderClicked(view: View) {
-        if(AuthService.isLoggedIn) {
+        if(App.sharedPrefs.isLoggedIn) {
             //logout
             UserDataService.logout()
 
@@ -148,7 +150,7 @@ class MainActivity : AppCompatActivity() {
 
     fun addChannelBtnNavHeaderClicked(view: View) {
 
-        if(AuthService.isLoggedIn){
+        if(App.sharedPrefs.isLoggedIn){
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.add_channel_dialog, null)
 
