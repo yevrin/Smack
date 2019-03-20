@@ -22,8 +22,8 @@ class CreateUserActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createSpinner.visibility = View.INVISIBLE
         setContentView(R.layout.activity_create_user)
+        createSpinner.visibility = View.INVISIBLE
     }
 
     fun generateBGColorBtnCreateClicked(view : View){
@@ -44,6 +44,7 @@ class CreateUserActivity : AppCompatActivity() {
 
     fun generateAvatarClicked(view : View){
 
+        hideKeyboard()
         val random = Random()
         val whatHue = random.nextInt(2)
         val whatImg = random.nextInt(28)

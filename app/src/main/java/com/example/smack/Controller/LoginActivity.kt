@@ -10,13 +10,14 @@ import android.widget.Toast
 import com.example.smack.R
 import com.example.smack.Services.AuthService
 import kotlinx.android.synthetic.main.activity_login.*
+import android.app.Activity
 
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loginSpinner.visibility = View.INVISIBLE
         setContentView(R.layout.activity_login)
+        loginSpinner.visibility = View.INVISIBLE
     }
 
     fun loginBtnLoginClicked(view : View){
