@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
 import com.example.smack.Model.Channel
+import com.example.smack.Model.Message
 import com.example.smack.R
 import com.example.smack.Services.AuthService
 import com.example.smack.Services.MessageService
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         socket.connect()
         socket.on("channelCreated", onNewChannel)
+        socket.on("messageCreated", onNewMessage)
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar,
@@ -125,7 +127,23 @@ class MainActivity : AppCompatActivity() {
 
         //download messages for content
     }
+    private val onNewMessage = Emitter.Listener{args ->
+        runOnUiThread {
+            val messageBody = args[0] as String
+            //val userId = args[1] as String
+            val channelId = args[2] as String
+            val userName = args[3] as String
+            val avatarImg = args[4] as String
+            val avatarBGColour = args[5] as String
+            val msgId = args[6] as String
+            val msgTimestamp = args[7] as String
 
+            val newMessage =  Message(messageBody, channelId, userName, avatarImg, avatarBGColour, msgId, msgTimestamp)
+            MessageService.messages.add(newMessage)
+            //channelAdapter.notifyDataSetChanged()
+        }
+
+    }
     override fun onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
             IntentFilter(BROADCAST_USER_DATA_CHANGE))
@@ -198,7 +216,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sendMsgBtnContentClicked(view: View){
-        hideKeyboard()
+
+        if(App.sharedPrefs.isLoggedIn){
+            val messageBody = msgTextFieldContent.text.toString()
+
+            if(messageBody.isNotEmpty()){
+                    if(selectedChannel != null) {
+
+                        socket.emit(
+                            "newMessage", messageBody, UserDataService.userId, selectedChannel!!.id,
+                            UserDataService.name, UserDataService.avatarImg, UserDataService.avatarBGColour
+                        )
+                        msgTextFieldContent.text.clear()
+                        hideKeyboard()
+                    }else{
+                        Toast.makeText(this, "Must select a channel before sending a message", Toast.LENGTH_SHORT).show()
+                    }
+            }else{
+                Toast.makeText(this, "You cannot send an empty message", Toast.LENGTH_SHORT).show()
+            }
+        }else{
+            //login first
+            Toast.makeText(this, "Must be logged in to send a message", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun hideKeyboard(){

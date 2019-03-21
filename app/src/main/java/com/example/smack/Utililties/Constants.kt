@@ -8,6 +8,7 @@ const val LOGIN_URL = "${BASE_URL}account/login"
 const val ADD_USER_URL = "${BASE_URL}user/add"
 const val FIND_USER_BY_EMAIL_URL = "${BASE_URL}user/byEmail/"
 const val FIND_ALL_CHANNELS = "${BASE_URL}channel"
+const val FIND_MSGS_BY_CHANNEL = "${BASE_URL}message/byChannel/"
 
 //Broadcast Constants
 const val BROADCAST_USER_DATA_CHANGE = "BROADCAST_USER_DATA_CHANGE"
