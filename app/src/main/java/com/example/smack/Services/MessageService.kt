@@ -1,16 +1,15 @@
 package com.example.smack.Services
 
-import android.content.Context
 import android.util.Log
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.Volley
 import com.example.smack.Controller.App
 import com.example.smack.Model.Channel
 import com.example.smack.Model.Message
 import com.example.smack.Utililties.FIND_ALL_CHANNELS
 import com.example.smack.Utililties.FIND_MSGS_BY_CHANNEL
 import org.json.JSONException
+
 object MessageService {
 
     val channels = ArrayList<Channel>()
@@ -60,21 +59,27 @@ object MessageService {
         App.sharedPrefs.requestQueue.add(findAllChannelsRequest)
     }
 
-    /*fun findAllMsgsByChannel(complete: (Boolean) -> Unit){
+    fun findAllMsgsByChannel(channelId : String, complete: (Boolean) -> Unit){
 
-        val findAllChannelsMsgsRequest = object : JsonArrayRequest(
+        val findAllMsgsRequest = object : JsonArrayRequest(
             Method.GET, "${FIND_MSGS_BY_CHANNEL}${channelId}", null,
             Response.Listener { response->
+                clearMessages()
                 try {
                     for (i in 0 until response.length()) {
-                        val jsonChannel = response.getJSONObject(i)
+                        val jsonMessage = response.getJSONObject(i)
 
-                        val channelId = jsonChannel.getString("_id")
-                        val channelName = jsonChannel.getString("name")
-                        val channelDescription = jsonChannel.getString("description")
+                        val msgId = jsonMessage.getString("_id")
+                        val msgBody = jsonMessage.getString("messageBody")
+                        val userId = jsonMessage.getString("userId")
+                        val channelId = jsonMessage.getString("_id")
+                        val userName = jsonMessage.getString("userName")
+                        val avatarImg = jsonMessage.getString("userAvatar")
+                        val avatarBGColour = jsonMessage.getString("userAvatarColor")
+                        val msgTimestamp = jsonMessage.getString("timeStamp")
 
-                        val channel = Channel(channelName, channelDescription, channelId)
-                        this.channels.add(channel)
+                        val message = Message(msgBody, channelId, userName, avatarImg, avatarBGColour, msgId, msgTimestamp)
+                        this.messages.add(message)
 
                     }
                     complete(true)
@@ -85,7 +90,7 @@ object MessageService {
                 }
             },
             Response.ErrorListener { error ->
-                Log.d("ERROR", "Could not find channels: $error")
+                Log.d("ERROR", "Could not find messages: $error")
                 complete(false)
             }){
 
@@ -101,6 +106,14 @@ object MessageService {
             }
         }
 
-        App.sharedPrefs.requestQueue.add(findAllChannelsRequest)
-    }*/
+        App.sharedPrefs.requestQueue.add(findAllMsgsRequest)
+    }
+
+    fun clearChannels(){
+        channels.clear()
+    }
+
+    fun clearMessages(){
+        messages.clear()
+    }
 }

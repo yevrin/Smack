@@ -42,5 +42,8 @@ object UserDataService {
         App.sharedPrefs.userEmail = ""
         App.sharedPrefs.isLoggedIn = false
 
+        MessageService.clearMessages()
+        MessageService.clearChannels()
+
     }
 }
