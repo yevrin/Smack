@@ -8,12 +8,14 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
+import com.example.smack.Adapters.MessageAdapter
 import com.example.smack.Model.Channel
 import com.example.smack.Model.Message
 import com.example.smack.R
@@ -33,11 +35,21 @@ class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
     lateinit var channelAdapter : ArrayAdapter<Channel>
+    lateinit var messageAdapter : MessageAdapter
     var selectedChannel: Channel? = null
 
     private fun setUpChannelAdapter(){
         channelAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1, MessageService.channels)
         channel_list.adapter = channelAdapter
+
+    }
+
+    private fun setUpMessageAdapter(){
+        messageAdapter = MessageAdapter(this,MessageService.messages)
+        msgListViewContent.adapter = messageAdapter
+
+        val layoutManager = LinearLayoutManager(this)
+        msgListViewContent.layoutManager = layoutManager
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         setUpChannelAdapter()
+        setUpMessageAdapter()
 
         channel_list.setOnItemClickListener { _, _, position, _ ->
             selectedChannel = MessageService.channels[position]
@@ -131,8 +144,9 @@ class MainActivity : AppCompatActivity() {
             MessageService.findAllMsgsByChannel(selectedChannel!!.id){complete->
                 if(complete){
                     //display messages
-                    for(message in MessageService.messages){
-                        
+                    messageAdapter.notifyDataSetChanged()
+                    if (messageAdapter.itemCount > 0){
+                        msgListViewContent.smoothScrollToPosition(messageAdapter.itemCount - 1)
                     }
                 }else{
                     Log.d("GET_MESSAGES", "could not get messages")
@@ -155,10 +169,10 @@ class MainActivity : AppCompatActivity() {
                     val msgId = args[6] as String
                     val msgTimestamp = args[7] as String
 
-                    val newMessage =
-                        Message(messageBody, channelId, userName, avatarImg, avatarBGColour, msgId, msgTimestamp)
+                    val newMessage = Message(messageBody, channelId, userName, avatarImg, avatarBGColour, msgId, msgTimestamp)
                     MessageService.messages.add(newMessage)
-                    //channelAdapter.notifyDataSetChanged()
+                    messageAdapter.notifyDataSetChanged()
+                    msgListViewContent.smoothScrollToPosition(messageAdapter.itemCount - 1)
                 }
             }
         }
@@ -189,6 +203,9 @@ class MainActivity : AppCompatActivity() {
         if(App.sharedPrefs.isLoggedIn) {
             //logout
             UserDataService.logout()
+
+            channelAdapter.notifyDataSetChanged()
+            messageAdapter.notifyDataSetChanged()
 
             usernameTxtNavHeader.text = ""
             userEmailTxtNavHeader.text = ""
