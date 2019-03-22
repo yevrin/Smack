@@ -73,6 +73,9 @@ class MainActivity : AppCompatActivity() {
         setUpChannelAdapter()
         setUpMessageAdapter()
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
+            IntentFilter(BROADCAST_USER_DATA_CHANGE))
+
         channel_list.setOnItemClickListener { _, _, position, _ ->
             selectedChannel = MessageService.channels[position]
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -177,19 +180,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    override fun onResume() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
-            IntentFilter(BROADCAST_USER_DATA_CHANGE))
-        super.onResume()
-    }
+
 
     override fun onDestroy() {
         socket.disconnect()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
         super.onDestroy()
     }
-
-
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -212,6 +209,7 @@ class MainActivity : AppCompatActivity() {
             profileIdImgNavHeader.setImageResource(R.drawable.profiledefault)
             profileIdImgNavHeader.setBackgroundColor(Color.TRANSPARENT)
             loginoutBtnNavHeader.text = "Login"
+            channelNameTxtContent.text = "Please log in"
 
 
         }else{
